@@ -53,14 +53,6 @@ class EventModel
         return $row ?: null;
     }
 
-    public static function byOrganizer(int $organizerId): array
-    {
-        $stmt = Database::pdo()->prepare(
-            'SELECT * FROM events WHERE organizer_id = ? ORDER BY starts_at DESC'
-        );
-        $stmt->execute([$organizerId]);
-        return $stmt->fetchAll();
-    }
 
     /** Ingressos vendidos e receita (apenas pedidos pagos) por evento do organizador. */
     public static function statsByOrganizer(int $organizerId): array

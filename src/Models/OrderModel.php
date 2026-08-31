@@ -29,13 +29,6 @@ class OrderModel
         return $row ?: null;
     }
 
-    public static function findForUser(int $id, int $userId): ?array
-    {
-        $stmt = Database::pdo()->prepare('SELECT * FROM orders WHERE id = ? AND user_id = ?');
-        $stmt->execute([$id, $userId]);
-        $row = $stmt->fetch();
-        return $row ?: null;
-    }
 
     /** Itens do pedido com nome do ingresso e do evento (para exibição e para geração de tickets). */
     public static function items(int $orderId): array
@@ -96,9 +89,4 @@ class OrderModel
         $stmt->execute([$paymentId, $id]);
     }
 
-    public static function delete(int $id): void
-    {
-        $stmt = Database::pdo()->prepare('DELETE FROM orders WHERE id = ?');
-        $stmt->execute([$id]);
-    }
 }

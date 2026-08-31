@@ -27,19 +27,6 @@ class Ticket
         return $stmt->fetchAll();
     }
 
-    public static function byUser(int $userId): array
-    {
-        $stmt = Database::pdo()->prepare(
-            'SELECT t.*, e.title AS event_title, e.starts_at, e.venue_name, tt.name AS ticket_type_name
-             FROM tickets t
-             JOIN events e ON e.id = t.event_id
-             JOIN ticket_types tt ON tt.id = t.ticket_type_id
-             WHERE t.user_id = ?
-             ORDER BY e.starts_at ASC'
-        );
-        $stmt->execute([$userId]);
-        return $stmt->fetchAll();
-    }
 
     public static function findByCode(string $code): ?array
     {
