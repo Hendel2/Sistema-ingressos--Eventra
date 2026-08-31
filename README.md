@@ -28,15 +28,6 @@ funcionar. O `config.php` está no `.gitignore` e não deve ser versionado.
 
 **4.** Abra `http://localhost/ingressos-app/public`.
 
-O seed cria um organizador para você entrar e testar o painel:
-
-```
-admin@eventra.com
-admin123
-```
-
-Se for publicar o projeto em algum lugar, troque essa senha antes.
-
 ## O que dá para fazer
 
 Como cliente: navegar e buscar eventos, montar carrinho respeitando o limite por
