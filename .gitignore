@@ -1,0 +1,12 @@
+# Configuracoes com credenciais - nunca versionar.
+# O modelo config.example.php fica no repositorio.
+/config/config.php
+/config/config.producao.php
+
+# Dumps de banco e cache gerado em runtime.
+/storage/backups/
+/storage/cache/
+
+# Imagens enviadas pelos organizadores.
+/public/assets/uploads/*
+!/public/assets/uploads/.gitkeep
