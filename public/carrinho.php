@@ -37,7 +37,7 @@ include __DIR__ . '/../templates/header.php';
                             <button type="submit" class="btn-link">Atualizar</button>
                         </form>
                     </td>
-                    <td data-label="Subtotal"><?= e(format_price($item['subtotal'])) ?></td>
+                    <td data-label="Subtotal"><?= e(price_label($item['subtotal'])) ?></td>
                     <td data-label="">
                         <form method="post" action="<?= e(base_url('api/carrinho.php')) ?>" class="inline-form">
                             <?= csrf_field() ?>
@@ -51,7 +51,7 @@ include __DIR__ . '/../templates/header.php';
             </tbody>
         </table>
 
-        <div class="cart-total">Total: <strong><?= e(format_price($total)) ?></strong></div>
+        <div class="cart-total">Total: <strong><?= e(price_label($total)) ?></strong></div>
 
         <form method="post" action="<?= e(base_url('checkout.php')) ?>">
             <?= csrf_field() ?>

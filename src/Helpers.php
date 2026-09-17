@@ -24,6 +24,11 @@ function format_price(float $value): string
     return 'R$ ' . number_format($value, 2, ',', '.');
 }
 
+function price_label(float $value): string
+{
+    return $value <= 0 ? 'Grátis' : format_price($value);
+}
+
 function format_datetime(string $datetime): string
 {
     $date = new DateTime($datetime);
@@ -100,7 +105,6 @@ function clear_old(): void
     unset($_SESSION['old']);
 }
 
-/** Categorias fixas oferecidas no cadastro de eventos (mais a opção "Outro"). */
 function event_categories(): array
 {
     return [
@@ -122,11 +126,7 @@ function event_categories(): array
     ];
 }
 
-/**
- * Status possíveis de um evento. Um evento nasce como rascunho ou publicado —
- * "cancelado" e "finalizado" descrevem algo que já aconteceu, então só ficam
- * disponíveis na edição.
- */
+
 function event_statuses(bool $isNew = false): array
 {
     $all = [
@@ -138,10 +138,7 @@ function event_statuses(bool $isNew = false): array
     return $isNew ? ['draft' => $all['draft'], 'published' => $all['published']] : $all;
 }
 
-/**
- * Resolve a capa do evento: aceita tanto uma URL externa quanto um arquivo
- * enviado pelo organizador (guardado como caminho relativo).
- */
+
 function cover_url(?string $value, string $fallback = ''): string
 {
     $value = trim((string) $value);
@@ -154,7 +151,7 @@ function cover_url(?string $value, string $fallback = ''): string
     return base_url(ltrim($value, '/'));
 }
 
-/** "São Paulo - SP", ou só a cidade quando o estado não estiver preenchido. */
+
 function city_label(array $event): string
 {
     $city = trim((string) ($event['city'] ?? ''));
@@ -165,11 +162,7 @@ function city_label(array $event): string
     return $state !== '' ? $city . ' - ' . $state : $city;
 }
 
-/**
- * Salva a capa enviada do computador em public/assets/uploads e devolve o
- * caminho relativo a ser gravado no banco. Retorna null quando nada foi
- * enviado ou quando houve erro — nesse caso o motivo vai em $error.
- */
+
 function store_cover_upload(array $file, ?string &$error = null): ?string
 {
     $error = null;
@@ -197,7 +190,7 @@ function store_cover_upload(array $file, ?string &$error = null): ?string
         'image/gif' => 'gif',
     ];
 
-    // O tipo vem do conteúdo do arquivo, nunca da extensão informada pelo navegador.
+    
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
     if (!isset($allowed[$mime]) || @getimagesize($file['tmp_name']) === false) {
         $error = 'Formato inválido. Envie uma imagem JPG, PNG, WEBP ou GIF.';
@@ -219,14 +212,13 @@ function store_cover_upload(array $file, ?string &$error = null): ?string
     return 'assets/uploads/' . $name;
 }
 
-/** Remove uma capa enviada anteriormente, quando ela é substituída. */
 function delete_cover_upload(?string $path): void
 {
     $path = trim((string) $path);
     if ($path === '' || preg_match('#^https?://#i', $path)) {
         return;
     }
-    // Só apaga dentro da pasta de uploads, nunca um caminho arbitrário.
+    
     if (strpos($path, 'assets/uploads/') !== 0 || strpos($path, '..') !== false) {
         return;
     }

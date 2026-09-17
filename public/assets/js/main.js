@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    /* ---------- Alertas somem sozinhos ---------- */
+
     document.querySelectorAll('.alert').forEach(function (alertEl) {
         setTimeout(function () {
             alertEl.style.transition = 'opacity .4s ease, transform .4s ease';
@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 6000);
     });
 
-    /* ---------- Menu mobile ---------- */
     var navToggle = document.getElementById('navToggle');
     var navLinks = document.getElementById('navLinks');
     if (navToggle && navLinks) {
@@ -20,9 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ---------- Cadastro de evento: campos dependentes ---------- */
-
-    // Categoria "Outro..." revela o campo de texto livre.
     var catSelect = document.getElementById('categorySelect');
     var catField = document.getElementById('categoryOtherField');
     var catInput = document.getElementById('categoryOtherInput');
@@ -30,14 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
         var syncCategory = function () {
             var isOther = catSelect.value === '__outro__';
             catField.hidden = !isOther;
-            // required só enquanto visível, senão o navegador trava a validação
             if (catInput) { catInput.required = isOther; }
         };
         catSelect.addEventListener('change', syncCategory);
         syncCategory();
     }
 
-    // Estado escolhido busca os municípios reais daquela UF na API.
     var stateSelect = document.getElementById('stateSelect');
     var citySelect = document.getElementById('citySelect');
     var cityHint = document.getElementById('cityHint');
@@ -97,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Capa: alterna entre informar URL e enviar arquivo.
     var modeRadios = document.querySelectorAll('input[name="cover_mode"]');
     var coverUrlField = document.getElementById('coverUrlField');
     var coverUploadField = document.getElementById('coverUploadField');
@@ -114,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
         syncCoverMode();
     }
 
-    /* ---------- Alternância de tema — escuro é o padrão ---------- */
     var toggle = document.getElementById('themeToggle');
     if (!toggle) {
         return;

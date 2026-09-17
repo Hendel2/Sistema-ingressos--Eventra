@@ -9,9 +9,9 @@ $events = EventModel::allPublished($search ?: null, $category ?: null, $city ?: 
 $categories = EventModel::categories();
 $isFiltered = $search !== '' || $category !== '' || $city !== '';
 
-// Com dois ou mais eventos o primeiro vira destaque e sai da grade, evitando
-// aparecer duas vezes. Fora disso a coluna recebe a chamada para organizadores,
-// para nunca sobrar espaço morto ao lado da manchete.
+
+
+
 $featured = (!$isFiltered && count($events) >= 2) ? $events[0] : null;
 $gridEvents = $featured !== null ? array_slice($events, 1) : $events;
 

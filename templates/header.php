@@ -1,5 +1,5 @@
 <?php
-/** @var string $pageTitle */
+
 $pageTitle = $pageTitle ?? 'Eventra';
 $mainClass = $mainClass ?? '';
 ?>
@@ -12,7 +12,6 @@ $mainClass = $mainClass ?? '';
 <meta name="theme-color" content="#08080a">
 <title><?= e($pageTitle) ?> · Eventra</title>
 <script>
-// Escuro é o padrão da marca; só sai dele se a pessoa escolher.
 (function () {
     var stored = localStorage.getItem('theme');
     document.documentElement.setAttribute('data-theme', stored === 'light' ? 'light' : 'dark');

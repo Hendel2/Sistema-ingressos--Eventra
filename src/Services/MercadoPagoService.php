@@ -8,10 +8,7 @@ class MercadoPagoService
         return $GLOBALS['config']['mercadopago']['access_token'];
     }
 
-    /**
-     * Cria uma preferência de pagamento (Checkout Pro) para o pedido informado.
-     * @param array<int,array{title:string,quantity:int,unit_price:float}> $items
-     */
+    
     public static function createPreference(int $orderId, array $items, string $payerEmail): array
     {
         $baseUrl = rtrim($GLOBALS['config']['app']['base_url'], '/');
@@ -25,25 +22,61 @@ class MercadoPagoService
                     'currency_id' => 'BRL',
                 ];
             }, $items),
-            'payer' => ['email' => $payerEmail],
             'external_reference' => (string) $orderId,
-            'back_urls' => [
+            'notification_url' => $baseUrl . '/api/webhook-mp.php',
+        ];
+
+        
+        
+        
+        $isPublic = str_starts_with($baseUrl, 'https://');
+        if ($isPublic) {
+            $payload['back_urls'] = [
                 'success' => $baseUrl . '/checkout-retorno.php?status=success',
                 'failure' => $baseUrl . '/checkout-retorno.php?status=failure',
                 'pending' => $baseUrl . '/checkout-retorno.php?status=pending',
+            ];
+            
+            $payload['auto_return'] = 'approved';
+        }
+
+        
+        
+        $payload['payment_methods'] = [
+            'excluded_payment_types' => [
+                ['id' => 'ticket'],
+                ['id' => 'atm'],
             ],
-            // 'auto_return' exige um domínio público válido em back_urls.success;
-            // em localhost o Mercado Pago rejeita a preferência com esse campo presente.
-            // Sem ele, o usuário só precisa clicar em "Voltar ao site" após pagar.
-            'notification_url' => $baseUrl . '/api/webhook-mp.php',
         ];
 
         return self::request('POST', '/checkout/preferences', $payload);
     }
 
+    
+    public static function checkoutUrl(array $preference): ?string
+    {
+        $sandbox = (bool) ($GLOBALS['config']['mercadopago']['sandbox'] ?? false);
+        $url = $sandbox
+            ? ($preference['sandbox_init_point'] ?? null)
+            : ($preference['init_point'] ?? null);
+
+        return $url ?: ($preference['init_point'] ?? $preference['sandbox_init_point'] ?? null);
+    }
+
     public static function getPayment(string $paymentId): array
     {
         return self::request('GET', '/v1/payments/' . urlencode($paymentId));
+    }
+
+    
+    public static function paymentsForOrder(int $orderId): array
+    {
+        $data = self::request(
+            'GET',
+            '/v1/payments/search?sort=date_created&criteria=desc&external_reference=' . $orderId
+        );
+
+        return is_array($data['results'] ?? null) ? $data['results'] : [];
     }
 
     private static function request(string $method, string $path, ?array $body = null): array

@@ -75,7 +75,7 @@ include __DIR__ . '/../templates/header.php';
                     <?php $available = TicketType::availableQuantity($tt); ?>
                     <div class="buy-row">
                         <span class="buy-row-name"><?= e($tt['name']) ?></span>
-                        <span class="buy-row-price"><?= e(format_price((float) $tt['price'])) ?></span>
+                        <span class="buy-row-price"><?= e(price_label((float) $tt['price'])) ?></span>
                         <?php if (!empty($tt['description'])): ?>
                             <span class="buy-row-desc"><?= e($tt['description']) ?></span>
                         <?php endif; ?>

@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../src/bootstrap.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Endpoint interno do cadastro de eventos: só organizadores autenticados.
 if (!Auth::check() || !Auth::isAdmin()) {
     http_response_code(403);
     echo json_encode(['error' => 'Acesso negado.']);

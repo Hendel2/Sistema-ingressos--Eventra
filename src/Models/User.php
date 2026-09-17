@@ -11,6 +11,13 @@ class User
         return $row ?: null;
     }
 
+    public static function findById(int $id): ?array
+    {
+        $stmt = Database::pdo()->prepare('SELECT * FROM users WHERE id = ?');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
 
     public static function create(string $name, string $email, string $passwordHash, string $role): int
     {

@@ -30,7 +30,7 @@ class OrderModel
     }
 
 
-    /** Itens do pedido com nome do ingresso e do evento (para exibição e para geração de tickets). */
+    
     public static function items(int $orderId): array
     {
         $stmt = Database::pdo()->prepare(
@@ -53,7 +53,7 @@ class OrderModel
         return $stmt->fetchAll();
     }
 
-    /** Pedidos pagos que contêm ao menos um ingresso de eventos do organizador informado. */
+    
     public static function byOrganizer(int $organizerId): array
     {
         $stmt = Database::pdo()->prepare(

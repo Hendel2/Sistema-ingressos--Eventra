@@ -90,16 +90,52 @@ do organizador logado.
 
 ## Pagamento
 
-A integração com o Mercado Pago (Checkout Pro) está escrita e funcional em
-`src/Services/MercadoPagoService.php`, mas **desativada**: hoje o
-`public/checkout.php` confirma o pedido e emite os ingressos direto, sem
-cobrança. O comentário no final daquele arquivo explica o que trocar para
-reativar.
+A cobrança é feita pelo **Mercado Pago (Checkout Pro)**. O fluxo é:
 
-Vale lembrar que o webhook precisa de URL pública — em `localhost` o Mercado Pago
-não alcança. Para testar localmente, use o ngrok, ou confie na
-`checkout-retorno.php`, que confirma o pagamento ativamente pelo `payment_id`
-quando o cliente volta.
+1. O cliente finaliza o carrinho. O pedido nasce como `pending` e o estoque já
+   fica reservado, para ninguém comprar o mesmo lugar duas vezes.
+2. O sistema cria uma preferência de pagamento e redireciona o cliente para o
+   Checkout Pro.
+3. Pagamento aprovado, o cliente volta ao site automaticamente (`auto_return`) e
+   os ingressos são emitidos.
+4. Pagamento recusado ou cancelado, o estoque reservado volta para o evento.
+
+Ingressos com preço zero não passam pelo Mercado Pago, que recusa itens sem
+valor. Eles aparecem como **Grátis** e a reserva é confirmada na hora.
+
+### Pedido que ficou pendente
+
+Se o cliente fechar a tela de pagamento antes de pagar, o pedido continua
+acessível: em **Minhas Compras** aparece o botão *Pagar pedido #N*, que gera uma
+nova cobrança para o mesmo pedido. Antes de cobrar, o sistema consulta o Mercado
+Pago para garantir que aquele pedido não foi pago enquanto isso — assim ninguém
+paga duas vezes.
+
+Abrir **Minhas Compras** também reconcilia pedidos pendentes: o sistema pergunta
+ao Mercado Pago o estado real de cada um e emite os ingressos se já houver
+pagamento aprovado. Isso cobre o caso de a notificação automática não chegar, o
+que acontece em hospedagens que exigem JavaScript para responder — o servidor do
+Mercado Pago não executa JS e nunca alcança o webhook.
+
+### Configuração
+
+Preencha `mercadopago.access_token` e `mercadopago.public_key` em
+`config/config.php` com as credenciais da sua aplicação em
+[mercadopago.com.br/developers](https://www.mercadopago.com.br/developers/panel).
+
+| Credencial | Quando usar |
+|---|---|
+| Teste | Validar a integração. Nenhum dinheiro real é movimentado e só cartões de teste funcionam. |
+| Produção | Vender de verdade. Obrigatória para receber de compradores reais. |
+
+O `base_url` precisa ser um endereço público em `https://` para o retorno
+automático funcionar. Em `localhost` o Mercado Pago recusa as URLs de retorno,
+então o cliente não volta sozinho — a compra é confirmada ao abrir Minhas
+Compras. Para testar o retorno localmente, exponha a porta com
+[ngrok](https://ngrok.com/) e aponte o `base_url` para a URL gerada.
+
+Boleto e pagamento em lotérica ficam desabilitados de propósito: são confirmados
+dias depois, quando o comprador já saiu do site, e dependeriam do webhook.
 
 ## Limitações
 

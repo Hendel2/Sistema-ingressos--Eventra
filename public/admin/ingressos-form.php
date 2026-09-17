@@ -99,7 +99,7 @@ include __DIR__ . '/../../templates/header.php';
         <?php foreach ($ticketTypes as $tt): ?>
             <tr>
                 <td><?= e($tt['name']) ?></td>
-                <td><?= e(format_price((float) $tt['price'])) ?></td>
+                <td><?= e(price_label((float) $tt['price'])) ?></td>
                 <td><?= (int) $tt['quantity_total'] ?></td>
                 <td><?= (int) $tt['quantity_sold'] ?></td>
                 <td>

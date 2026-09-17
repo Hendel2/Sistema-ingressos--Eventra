@@ -3,11 +3,7 @@ declare(strict_types=1);
 
 class TicketService
 {
-    /**
-     * Consulta o pagamento no Mercado Pago e atualiza o pedido correspondente.
-     * Usada tanto pelo webhook (assíncrono) quanto pela página de retorno (síncrono),
-     * já que o Mercado Pago é a única fonte confiável de status de pagamento.
-     */
+    
     public static function confirmPayment(string $paymentId): ?array
     {
         $payment = MercadoPagoService::getPayment($paymentId);
@@ -33,7 +29,28 @@ class TicketService
         return OrderModel::find($orderId);
     }
 
-    /** Gera os ingressos individuais (um por unidade comprada) para um pedido já pago. */
+    
+    public static function reconcilePendingOrder(int $orderId): ?array
+    {
+        $order = OrderModel::find($orderId);
+        if ($order === null || $order['status'] !== 'pending') {
+            return null;
+        }
+
+        foreach (MercadoPagoService::paymentsForOrder($orderId) as $payment) {
+            $status = $payment['status'] ?? '';
+            $paymentId = (string) ($payment['id'] ?? '');
+            if ($paymentId === '' || !in_array($status, ['approved', 'cancelled', 'rejected'], true)) {
+                continue;
+            }
+
+            return self::confirmPayment($paymentId);
+        }
+
+        return null;
+    }
+
+    
     public static function generateForOrder(int $orderId): void
     {
         $order = OrderModel::find($orderId);
@@ -58,7 +75,7 @@ class TicketService
         }
     }
 
-    /** Libera o estoque reservado quando o pagamento de um pedido não é aprovado. */
+    
     public static function releaseOrderStock(int $orderId): void
     {
         foreach (OrderModel::items($orderId) as $item) {

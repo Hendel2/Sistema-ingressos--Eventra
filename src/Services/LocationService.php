@@ -1,18 +1,10 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Estados e municípios brasileiros.
- *
- * Os municípios vêm da base do IBGE. Como o host oficial da API
- * (servicodedados.ibge.gov.br) fica indisponível com alguma frequência, a
- * consulta tenta o IBGE primeiro e cai para a BrasilAPI, que republica os
- * mesmos dados. O resultado é gravado em cache no disco, então o cadastro
- * continua funcionando mesmo com as duas fontes fora do ar.
- */
+
 class LocationService
 {
-    /** Tempo até o cache ser considerado velho (30 dias). */
+    
     private const CACHE_TTL = 2592000;
 
     private const SOURCES = [
@@ -20,7 +12,6 @@ class LocationService
         'https://brasilapi.com.br/api/ibge/municipios/v1/%s',
     ];
 
-    /** As 27 unidades federativas. */
     public static function states(): array
     {
         return [
@@ -59,10 +50,7 @@ class LocationService
         return isset(self::states()[strtoupper($uf)]);
     }
 
-    /**
-     * Todos os municípios da UF, em ordem alfabética.
-     * Devolve lista vazia apenas se não houver rede nem cache.
-     */
+    
     public static function cities(string $uf): array
     {
         $uf = strtoupper(trim($uf));
@@ -81,11 +69,10 @@ class LocationService
             return $fresh;
         }
 
-        // Rede falhou: um cache vencido ainda é melhor que lista vazia.
+        
         return $cached['cities'] ?? [];
     }
 
-    /** Baixa a lista de municípios, tentando cada fonte na ordem. */
     private static function fetch(string $uf): array
     {
         foreach (self::SOURCES as $template) {
@@ -101,7 +88,7 @@ class LocationService
 
             $names = [];
             foreach ($data as $item) {
-                // IBGE e BrasilAPI usam a mesma chave "nome".
+                
                 $name = is_array($item) ? ($item['nome'] ?? null) : null;
                 if (is_string($name) && $name !== '') {
                     $names[] = self::humanize($name);
@@ -135,10 +122,7 @@ class LocationService
         return ($body !== false && $code === 200) ? (string) $body : null;
     }
 
-    /**
-     * A API devolve os nomes em caixa alta ("SAO PAULO", "AGUAÍ").
-     * Aqui viram "São Paulo", "Aguaí", "Santa Bárbara d'Oeste".
-     */
+    
     private static function humanize(string $name): string
     {
         $connectors = ['de', 'da', 'do', 'das', 'dos', 'e'];
@@ -166,7 +150,7 @@ class LocationService
         return APP_ROOT . '/storage/cache/cities/' . $uf . '.json';
     }
 
-    /** @return array{cities: array, stale: bool}|null */
+    
     private static function readCache(string $uf): ?array
     {
         $file = self::cacheFile($uf);

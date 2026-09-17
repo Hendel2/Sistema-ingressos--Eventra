@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $startsAt = trim($_POST['starts_at'] ?? '');
     $endsAt = trim($_POST['ends_at'] ?? '');
 
-    // Categoria: escolhida na lista fixa ou digitada quando for "Outro".
     $category = trim($_POST['category'] ?? '');
     if ($category === '__outro__') {
         $category = trim($_POST['category_other'] ?? '');
@@ -41,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $category = '';
     }
 
-    // Cidade é validada contra a lista real de municípios da UF escolhida.
     $state = strtoupper(trim($_POST['state'] ?? ''));
     $city = trim($_POST['city'] ?? '');
 
@@ -56,16 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($validCities === []) {
             $errors[] = 'Não foi possível carregar a lista de municípios agora. Tente novamente em instantes.';
         } elseif (!in_array($city, $validCities, true) && $city !== ($event['city'] ?? null)) {
-            // A exceção mantém cidades já gravadas antes de a lista oficial existir.
+
             $errors[] = 'A cidade escolhida não pertence ao estado selecionado.';
             $city = '';
         }
     }
 
-    // Capa: arquivo do computador ou URL, conforme a opção marcada. Aqui só
-    // validamos — o arquivo em si é gravado mais abaixo, depois que todo o
-    // resto passar, para não deixar imagem órfã no servidor quando o
-    // formulário volta com erro.
     $coverMode = ($_POST['cover_mode'] ?? 'url') === 'upload' ? 'upload' : 'url';
     $coverImage = $event['cover_image'] ?? null;
     $previousCover = $coverImage;
@@ -81,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Escolha o arquivo de imagem da capa.';
     }
 
-    // Cancelado e finalizado só existem na edição — ver event_statuses().
     $status = in_array($_POST['status'] ?? '', array_keys($statuses), true)
         ? $_POST['status']
         : 'draft';
@@ -92,13 +85,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($startsAt === '' || strtotime($startsAt) === false) {
         $errors[] = 'Informe uma data/hora de início válida.';
     } elseif (strtotime($startsAt) < time() && ($isNew || date('Y-m-d H:i:s', strtotime($startsAt)) !== $event['starts_at'])) {
-        // A vitrine pública só lista eventos futuros (ver EventModel::allPublished),
-        // então uma data no passado publicaria um evento invisível. A exceção do
-        // else permite editar um evento antigo sem ser obrigado a mudar a data.
+
         $errors[] = 'A data de início precisa ser no futuro: eventos que já começaram somem da listagem pública.';
     }
 
-    // Grava o arquivo enviado apenas quando nada mais falhou.
     if (empty($errors) && $coverMode === 'upload') {
         $uploadError = null;
         $stored = store_cover_upload($_FILES['cover_file'] ?? [], $uploadError);
@@ -154,7 +144,6 @@ function fval(?array $event, string $key, string $post = ''): string
     return e($event[$key] ?? $post);
 }
 
-// Valores atuais dos combos, considerando o que foi postado numa tentativa com erro.
 $currentCategory = $_POST['category'] ?? ($event['category'] ?? '');
 $categoryIsOther = $currentCategory !== '' && !in_array($currentCategory, $categories, true);
 $categoryOther = $_POST['category_other'] ?? ($categoryIsOther ? $currentCategory : '');
@@ -162,8 +151,6 @@ $categoryOther = $_POST['category_other'] ?? ($categoryIsOther ? $currentCategor
 $currentState = strtoupper($_POST['state'] ?? ($event['state'] ?? ''));
 $currentCity = $_POST['city'] ?? ($event['city'] ?? '');
 
-// A lista já sai renderizada quando há estado, para a página funcionar mesmo
-// antes do JS rodar (e para o valor atual aparecer selecionado na edição).
 $cityOptions = LocationService::isValidState($currentState) ? LocationService::cities($currentState) : [];
 if ($currentCity !== '' && $cityOptions !== [] && !in_array($currentCity, $cityOptions, true)) {
     array_unshift($cityOptions, $currentCity);
@@ -242,8 +229,8 @@ $currentMode = $_POST['cover_mode'] ?? ($coverIsUpload ? 'upload' : 'url');
             </label>
 
             <label>Início
-                <?php // O min só entra em evento novo: num evento antigo ele travaria
-                      // o envio do formulário mesmo sem mexer na data. ?>
+                <?php 
+                      ?>
                 <input type="datetime-local" name="starts_at" required
                        <?= $isNew ? 'min="' . e(date('Y-m-d\TH:i')) . '"' : '' ?>
                        value="<?= isset($_POST['starts_at']) ? e($_POST['starts_at']) : ($event ? date('Y-m-d\TH:i', strtotime($event['starts_at'])) : '') ?>">

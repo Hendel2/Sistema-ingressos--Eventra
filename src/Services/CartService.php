@@ -5,7 +5,7 @@ class CartService
 {
     private const SESSION_KEY = 'cart';
 
-    /** @return array<int,int> mapa ticket_type_id => quantidade */
+    
     public static function items(): array
     {
         return $_SESSION[self::SESSION_KEY] ?? [];
@@ -49,7 +49,6 @@ class CartService
         return array_sum(self::items());
     }
 
-    /** Retorna os itens do carrinho já cruzados com dados atuais do ingresso/evento. */
     public static function detailed(): array
     {
         $detailed = [];

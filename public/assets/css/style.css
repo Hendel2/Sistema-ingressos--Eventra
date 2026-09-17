@@ -1,9 +1,5 @@
-/* ==========================================================================
-   EVENTRA — sistema visual
-   Dark = neon/after-hours (padrão) · Light = zine xerocado
-   ========================================================================== */
 
-/* ---------- 1. Tokens: DARK (padrão) ---------- */
+
 :root {
     --bg:            #08080a;
     --bg-2:          #0d0d11;
@@ -39,7 +35,6 @@
     --r:             4px;
     --r-lg:          6px;
 
-    /* Medidas de layout */
     --wide:          1560px;
     --gutter:        clamp(20px, 4.5vw, 72px);
     --pad-top:       46px;
@@ -52,7 +47,6 @@
     color-scheme: dark;
 }
 
-/* ---------- 2. Tokens: LIGHT (zine xerocado) ---------- */
 :root[data-theme="light"] {
     --bg:            #eeece4;
     --bg-2:          #e5e2d8;
@@ -88,7 +82,6 @@
     color-scheme: light;
 }
 
-/* ---------- 3. Base ---------- */
 * { box-sizing: border-box; }
 
 html { background: var(--bg); }
@@ -103,7 +96,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Grão sobre a página inteira — dá textura de impressão */
 body::before {
     content: "";
     position: fixed;
@@ -114,7 +106,6 @@ body::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Brilho ambiente atrás do conteúdo (só no dark) */
 body::after {
     content: "";
     position: fixed;
@@ -136,9 +127,6 @@ a:hover { color: var(--acid); }
 
 ::selection { background: var(--acid); color: var(--acid-ink); }
 
-/* Largura do site: acompanha a tela em vez de travar num bloco estreito.
-   O padding lateral cresce junto com a viewport, então telas largas ganham
-   respiro sem deixar buraco morto. */
 .container {
     position: relative;
     z-index: 1;
@@ -148,14 +136,12 @@ a:hover { color: var(--acid); }
     padding: var(--pad-top) var(--gutter) var(--pad-bottom);
 }
 
-/* Páginas que assumem a tela inteira (login/cadastro) */
 .container--flush {
     max-width: none;
     padding: 0;
 }
 .container--flush > .alert { margin: 0; border-left-width: 0; border-top-width: 4px; }
 
-/* ---------- 4. Tipografia ---------- */
 h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 400;
@@ -169,7 +155,6 @@ h1 { font-size: clamp(2rem, 5.5vw, 3.4rem); }
 h2 { font-size: clamp(1.4rem, 3vw, 2rem); margin-top: 1.6em; }
 h3 { font-size: 1.15rem; letter-spacing: -.01em; }
 
-/* Título com barra ácida na lateral */
 h2::before {
     content: "";
     display: inline-block;
@@ -192,7 +177,6 @@ p { margin: 0 0 1em; }
     display: block;
 }
 
-/* ---------- 5. Navbar ---------- */
 .navbar {
     position: sticky;
     top: 0;
@@ -224,8 +208,7 @@ p { margin: 0 0 1em; }
     flex-shrink: 0;
     margin-right: auto;
 }
-/* O nome fica num único elemento: como .brand é flex, deixar "Even" e "tra"
-   soltos criava dois itens e o gap abria um vão no meio da palavra. */
+
 .brand-word { letter-spacing: -.04em; white-space: nowrap; }
 .brand-accent { color: var(--acid); }
 .brand::before {
@@ -292,8 +275,6 @@ p { margin: 0 0 1em; }
     vertical-align: 1px;
 }
 
-/* Carrinho: sai da fileira de links de texto e vira alvo próprio, senão
-   passa batido no meio do menu. */
 .nav-links > .nav-cart {
     display: inline-flex;
     align-items: center;
@@ -356,7 +337,6 @@ p { margin: 0 0 1em; }
     transform: rotate(-12deg);
 }
 
-/* Botão de menu mobile */
 .nav-toggle {
     display: none;
     width: 40px;
@@ -371,7 +351,6 @@ p { margin: 0 0 1em; }
     justify-content: center;
 }
 
-/* ---------- 6. Ticker / marquee ---------- */
 .ticker {
     background: var(--acid);
     color: var(--acid-ink);
@@ -403,7 +382,6 @@ p { margin: 0 0 1em; }
     .ticker-track { animation: none; }
 }
 
-/* ---------- 7. Alertas ---------- */
 .alert {
     position: relative;
     padding: 14px 18px 14px 20px;
@@ -417,7 +395,6 @@ p { margin: 0 0 1em; }
 .alert-success { border-color: var(--ok);  background: var(--ok-bg);  color: var(--ok); }
 .alert-error   { border-color: var(--bad); background: var(--bad-bg); color: var(--bad); }
 
-/* ---------- 8. Botões ---------- */
 .btn {
     display: inline-block;
     border: 1px solid transparent;
@@ -475,7 +452,6 @@ p { margin: 0 0 1em; }
 
 .inline-form { display: inline-flex; align-items: center; gap: 8px; }
 
-/* ---------- 9. Hero + busca ---------- */
 .hero {
     padding: 34px 0 46px;
     border-bottom: 1px solid var(--line);
@@ -527,7 +503,6 @@ p { margin: 0 0 1em; }
 .search-form .btn { border-radius: 0; }
 .search-form .btn-primary:hover { transform: none; box-shadow: none; background: var(--magenta); color: var(--magenta-ink); border-color: var(--magenta); }
 
-/* ---------- 10. Grid de eventos ---------- */
 .event-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -612,7 +587,6 @@ p { margin: 0 0 1em; }
 }
 .empty-state a { color: var(--acid); border-bottom: 1px solid var(--acid); }
 
-/* ---------- 11. Detalhe do evento ---------- */
 .event-detail-description {
     margin: 26px 0;
     padding-top: 24px;
@@ -621,7 +595,6 @@ p { margin: 0 0 1em; }
     max-width: 68ch;
 }
 
-/* ---------- 12. Tabelas ---------- */
 .ticket-table {
     width: 100%;
     border-collapse: collapse;
@@ -652,7 +625,6 @@ p { margin: 0 0 1em; }
 .ticket-table select { width: auto; min-width: 74px; margin: 0; }
 .ticket-table input { margin: 0; }
 
-/* preço em destaque — coluna 2 no evento, coluna 4 (subtotal) no carrinho */
 .ticket-form .ticket-table td:nth-child(2),
 .cart-page .ticket-table td:nth-child(4) {
     font-family: var(--font-mono);
@@ -660,7 +632,6 @@ p { margin: 0 0 1em; }
     color: var(--acid);
 }
 
-/* ---------- 13. Formulários ---------- */
 .auth-form,
 .admin-form {
     max-width: 560px;
@@ -727,7 +698,6 @@ form select:focus {
 .auth-form a { color: var(--acid); border-bottom: 1px solid transparent; }
 .auth-form a:hover { border-bottom-color: var(--acid); }
 
-/* ---------- 14. Carrinho e pedidos ---------- */
 .cart-total {
     display: flex;
     align-items: baseline;
@@ -802,7 +772,6 @@ form select:focus {
 }
 .order-tickets .btn { padding: 10px 18px; font-size: .72rem; }
 
-/* ---------- 15. Badges ---------- */
 .badge {
     display: inline-block;
     padding: 5px 12px;
@@ -827,7 +796,6 @@ form select:focus {
 .badge-refunded,
 .badge-draft    { background: var(--neutral-bg); color: var(--neutral); }
 
-/* ---------- 16. Ingresso (canhoto picotado) ---------- */
 .ticket-view {
     display: flex;
     justify-content: center;
@@ -844,7 +812,7 @@ form select:focus {
     border: 1px solid var(--line-strong);
     box-shadow: var(--shadow-soft);
 }
-/* faixa ácida no topo */
+
 .ticket-card::before {
     content: "";
     position: absolute;
@@ -858,7 +826,7 @@ form select:focus {
         var(--magenta) 14px 28px
     );
 }
-/* recortes laterais do canhoto */
+
 .ticket-card::after {
     content: "";
     position: absolute;
@@ -904,7 +872,6 @@ form select:focus {
     color: var(--muted) !important;
 }
 
-/* ---------- 17. Painel do organizador ---------- */
 .admin-header {
     display: flex;
     align-items: flex-end;
@@ -974,7 +941,6 @@ form select:focus {
 .checkin-form label { flex: 1; margin-bottom: 0; }
 .checkin-form input { font-family: var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
 
-/* ---------- 18. Retorno do checkout ---------- */
 .checkout-return {
     max-width: 560px;
     margin: 0 auto;
@@ -985,7 +951,6 @@ form select:focus {
 }
 .checkout-return p { color: var(--text-dim); }
 
-/* ---------- 19. Rodapé ---------- */
 .site-footer {
     position: relative;
     z-index: 1;
@@ -1018,7 +983,6 @@ form select:focus {
     letter-spacing: -.02em;
 }
 
-/* ---------- 20. Responsivo ---------- */
 @media (max-width: 860px) {
     .search-form { grid-template-columns: 1fr 1fr; }
     .search-form input:first-child { grid-column: 1 / -1; border-bottom: 1px solid var(--line); }
@@ -1061,7 +1025,6 @@ form select:focus {
     .checkin-form { flex-direction: column; align-items: stretch; }
     .cart-total { justify-content: space-between; }
 
-    /* tabelas viram cartões */
     .ticket-table thead { display: none; }
     .ticket-table,
     .ticket-table tbody,
@@ -1082,7 +1045,6 @@ form select:focus {
     }
     .ticket-table td:last-child { border-bottom: none; }
 
-    /* rótulo da coluna, já que o thead some */
     .ticket-table td::before {
         content: attr(data-label);
         flex-shrink: 0;
@@ -1096,12 +1058,6 @@ form select:focus {
     .ticket-table td:empty { display: none; }
 }
 
-
-/* ==========================================================================
-   21. LAYOUTS LARGOS — tela grande pede estrutura, não margem sobrando
-   ========================================================================== */
-
-/* ---------- Cabeçalho de página ---------- */
 .page-head {
     display: flex;
     align-items: flex-end;
@@ -1122,7 +1078,6 @@ form select:focus {
     color: var(--muted);
 }
 
-/* ---------- Login / cadastro ocupando a tela ---------- */
 .auth-split {
     display: grid;
     grid-template-columns: 1.1fr .9fr;
@@ -1203,7 +1158,6 @@ form select:focus {
     box-shadow: none;
 }
 
-/* ---------- Home: manchete + destaque ---------- */
 .hero {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
@@ -1261,7 +1215,6 @@ form select:focus {
     padding-bottom: 2px;
 }
 
-/* ---------- Detalhe do evento em duas colunas ---------- */
 .event-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
@@ -1271,7 +1224,6 @@ form select:focus {
 }
 .event-main { min-width: 0; }
 
-/* ficha técnica no lugar da linha com emoji */
 .event-facts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -1293,7 +1245,6 @@ form select:focus {
 }
 .event-facts dd { margin: 0; font-size: .95rem; color: var(--text); }
 
-/* painel de compra fixo na lateral */
 .buy-panel {
     position: sticky;
     top: 92px;
@@ -1350,7 +1301,6 @@ form select:focus {
 .buy-row select { width: auto; min-width: 78px; margin: 0; padding: 9px 11px; }
 .buy-panel .btn { width: 100%; }
 
-/* ---------- Formulários em grade ---------- */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1358,7 +1308,6 @@ form select:focus {
 }
 .form-grid > .form-full { grid-column: 1 / -1; }
 
-/* checkbox próprio, no lugar do controle padrão do sistema */
 .checkbox-label {
     display: flex;
     align-items: flex-start;
@@ -1400,7 +1349,6 @@ form select:focus {
 .checkbox-label input[type="checkbox"]:checked::after { transform: scale(1); }
 .checkbox-label:hover input[type="checkbox"] { border-color: var(--acid); }
 
-/* ---------- Rodapé ---------- */
 .footer-inner {
     display: grid;
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -1462,12 +1410,10 @@ form select:focus {
     border-top: 1px solid var(--line);
 }
 
-/* ---------- Grid de eventos mais largo em telas grandes ---------- */
 @media (min-width: 1500px) {
     .event-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
 }
 
-/* ---------- Responsivo dos layouts largos ---------- */
 @media (max-width: 1080px) {
     .event-layout { grid-template-columns: 1fr; }
     .buy-panel { position: static; }
@@ -1494,15 +1440,12 @@ form select:focus {
     .buy-row-price { grid-column: 1; grid-row: auto; }
 }
 
-
-/* ---------- Capa do evento em largura total, com título sobreposto ---------- */
 .event-hero {
     position: relative;
-    /* estoura o padding lateral do container para encostar nas bordas */
+
     margin: 0 calc(var(--gutter) * -1);
 }
-/* Só encosta no topo quando abre a página. Se vier um alerta antes (ex.:
-   "Ingressos adicionados ao carrinho"), o hero desce em vez de cobrir o aviso. */
+
 .container > .event-hero:first-child { margin-top: calc(var(--pad-top) * -1); }
 .event-hero-cover {
     height: clamp(260px, 42vh, 460px);
@@ -1536,7 +1479,6 @@ form select:focus {
 }
 .event-hero-inner .event-card-category { margin-bottom: 14px; }
 
-/* ---------- Painel de chamada (quando não há evento em destaque) ---------- */
 .promo-panel {
     padding: 28px 26px 30px;
     background: var(--surface);
@@ -1550,18 +1492,10 @@ form select:focus {
     margin-bottom: 22px;
 }
 
-/* cidade no card fica mais discreta que a data */
 .event-card-city { color: var(--muted); opacity: .8; }
 
-/* a busca não deve encostar no rodapé do hero em telas médias */
 .hero-sub { margin-bottom: 0; }
 
-
-/* ==========================================================================
-   22. CONTROLES DE FORMULÁRIO — escolha de capa, campos condicionais
-   ========================================================================== */
-
-/* Bloco com legenda própria, para agrupar opções relacionadas */
 .field-block {
     margin-bottom: 24px;
     padding: 20px 22px 22px;
@@ -1591,7 +1525,6 @@ form select:focus {
     color: var(--muted);
 }
 
-/* Par de opções (URL x arquivo) */
 .choice-row {
     display: flex;
     flex-wrap: wrap;
@@ -1645,7 +1578,6 @@ form select:focus {
 .choice input[type="radio"]:checked { border-color: var(--acid); }
 .choice input[type="radio"]:checked::after { transform: scale(1); }
 
-/* Seletor de arquivo */
 form input[type="file"] {
     padding: 10px 12px;
     font-family: var(--font-mono);
@@ -1667,7 +1599,6 @@ form input[type="file"]::file-selector-button {
 }
 form input[type="file"]::file-selector-button:hover { background: var(--magenta); color: var(--magenta-ink); }
 
-/* Prévia da capa já salva */
 .cover-preview {
     display: flex;
     align-items: center;
@@ -1690,23 +1621,19 @@ form input[type="file"]::file-selector-button:hover { background: var(--magenta)
     color: var(--muted);
 }
 
-/* Combo desabilitado enquanto o estado não foi escolhido */
 form select:disabled {
     opacity: .55;
     cursor: not-allowed;
     background: var(--surface-2);
 }
 
-/* Campo condicional escondido não deve ocupar espaço na grade */
 .form-grid > [hidden] { display: none; }
 
-/* Selo do novo status */
 .badge-finished {
     background: color-mix(in srgb, var(--acid) 16%, transparent);
     color: var(--acid);
 }
 
-/* Aviso de evento publicado cuja data já passou: some da listagem pública */
 .badge-past {
     background: var(--warn-bg);
     color: var(--warn);

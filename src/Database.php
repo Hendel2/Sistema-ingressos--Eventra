@@ -11,8 +11,6 @@ class Database
             return;
         }
 
-        // A porta e opcional: hospedagens compartilhadas as vezes usam
-        // uma porta diferente da 3306 padrao.
         $dsn = sprintf(
             'mysql:host=%s;%sdbname=%s;charset=%s',
             $dbConfig['host'],

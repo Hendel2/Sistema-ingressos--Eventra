@@ -46,7 +46,7 @@ include __DIR__ . '/../../templates/header.php';
                 <strong>Pedido #<?= (int) $order['id'] ?></strong> — <?= e($order['customer_name']) ?> (<?= e($order['customer_email']) ?>)
                 <span class="badge badge-<?= e($order['status']) ?>"><?= e($statusLabels[$order['status']] ?? $order['status']) ?></span>
             </div>
-            <p><?= e(format_datetime($order['created_at'])) ?> — Total: <?= e(format_price((float) $order['total_amount'])) ?></p>
+            <p><?= e(format_datetime($order['created_at'])) ?> — Total: <?= e(price_label((float) $order['total_amount'])) ?></p>
             <ul>
                 <?php foreach ($itemsByOrder[$order['id']] as $item): ?>
                     <li><?= (int) $item['quantity'] ?>x <?= e($item['event_title']) ?> — <?= e($item['ticket_type_name']) ?></li>

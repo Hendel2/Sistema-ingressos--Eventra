@@ -54,7 +54,7 @@ class EventModel
     }
 
 
-    /** Ingressos vendidos e receita (apenas pedidos pagos) por evento do organizador. */
+    
     public static function statsByOrganizer(int $organizerId): array
     {
         $stmt = Database::pdo()->prepare(

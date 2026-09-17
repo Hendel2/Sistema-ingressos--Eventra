@@ -49,8 +49,8 @@ include __DIR__ . '/../../templates/header.php';
                     <td><?= e(format_datetime($s['starts_at'])) ?></td>
                     <td>
                         <span class="badge badge-<?= e($s['status']) ?>"><?= e($statusLabels[$s['status']] ?? $s['status']) ?></span>
-                        <?php // Publicado + data passada = sumiu da vitrine. Sem esse aviso o
-                              // organizador não tem pista de por que o evento não aparece. ?>
+                        <?php 
+                              ?>
                         <?php if ($s['status'] === 'published' && strtotime($s['starts_at']) < time()): ?>
                             <span class="badge badge-past" title="A data de início já passou, então este evento saiu da listagem pública.">Fora da vitrine</span>
                         <?php endif; ?>

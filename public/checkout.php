@@ -51,14 +51,60 @@ try {
     redirect('carrinho.php');
 }
 
-// Integração de pagamento (Mercado Pago) temporariamente desativada:
-// o pedido é confirmado direto, sem cobrança real. O estoque já foi
-// reservado acima. Para reativar o pagamento real, volte a chamar
-// MercadoPagoService::createPreference() e redirecionar para o checkoutUrl
-// em vez do bloco abaixo.
-OrderModel::updateStatus($orderId, 'paid');
-TicketService::generateForOrder($orderId);
+
+
+
+$buyer = User::findById((int) Auth::id());
+
+
+
+$payableItems = [];
+foreach ($items as $item) {
+    $price = (float) $item['ticket_type']['price'];
+    if ($price <= 0) {
+        continue;
+    }
+    $payableItems[] = [
+        'title' => $item['ticket_type']['name'] . ' - ' . ($item['event']['title'] ?? 'Evento'),
+        'quantity' => (int) $item['quantity'],
+        'unit_price' => $price,
+    ];
+}
+
+
+if ($payableItems === []) {
+    OrderModel::updateStatus($orderId, 'paid');
+    TicketService::generateForOrder($orderId);
+    CartService::clear();
+    flash_set('success', 'Reserva confirmada! Seus ingressos já estão em "Minhas Compras".');
+    redirect('minhas-compras.php');
+}
+
+try {
+    $preference = MercadoPagoService::createPreference(
+        $orderId,
+        $payableItems,
+        (string) ($buyer['email'] ?? '')
+    );
+} catch (Throwable $e) {
+    
+    error_log('Erro ao criar preferência no Mercado Pago: ' . $e->getMessage());
+    TicketService::releaseOrderStock($orderId);
+    OrderModel::updateStatus($orderId, 'cancelled');
+    flash_set('error', 'Não foi possível iniciar o pagamento. Tente novamente em instantes.');
+    redirect('carrinho.php');
+}
+
+$checkoutUrl = MercadoPagoService::checkoutUrl($preference);
+if ($checkoutUrl === null) {
+    error_log('Mercado Pago não devolveu init_point para o pedido ' . $orderId);
+    TicketService::releaseOrderStock($orderId);
+    OrderModel::updateStatus($orderId, 'cancelled');
+    flash_set('error', 'Não foi possível iniciar o pagamento. Tente novamente em instantes.');
+    redirect('carrinho.php');
+}
+
+OrderModel::setPreferenceId($orderId, (string) ($preference['id'] ?? ''));
 CartService::clear();
 
-flash_set('success', 'Compra confirmada! Seus ingressos já estão em "Minhas Compras".');
-redirect('minhas-compras.php');
+redirect($checkoutUrl);

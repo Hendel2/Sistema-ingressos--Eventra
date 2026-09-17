@@ -71,10 +71,6 @@ class TicketType
         return max(0, (int) $ticketType['quantity_total'] - (int) $ticketType['quantity_sold']);
     }
 
-    /**
-     * Incrementa quantity_sold de forma atômica, respeitando o limite de estoque.
-     * Retorna true se a reserva foi bem-sucedida.
-     */
     public static function reserveStock(int $id, int $qty): bool
     {
         $stmt = Database::pdo()->prepare(

@@ -4,6 +4,28 @@ require_once __DIR__ . '/../src/bootstrap.php';
 Auth::requireLogin();
 
 $orders = OrderModel::byUser((int) Auth::id());
+
+
+
+
+
+$reconciled = false;
+foreach ($orders as $order) {
+    if ($order['status'] !== 'pending') {
+        continue;
+    }
+    try {
+        if (TicketService::reconcilePendingOrder((int) $order['id']) !== null) {
+            $reconciled = true;
+        }
+    } catch (Throwable $e) {
+        error_log('Falha ao conferir o pedido ' . $order['id'] . ': ' . $e->getMessage());
+    }
+}
+if ($reconciled) {
+    $orders = OrderModel::byUser((int) Auth::id());
+}
+
 $itemsByOrder = [];
 $ticketsByOrder = [];
 foreach ($orders as $order) {
@@ -40,7 +62,7 @@ include __DIR__ . '/../templates/header.php';
                 <strong>Pedido #<?= (int) $order['id'] ?></strong>
                 <span class="badge badge-<?= e($order['status']) ?>"><?= e($statusLabels[$order['status']] ?? $order['status']) ?></span>
             </div>
-            <p><?= e(format_datetime($order['created_at'])) ?> — Total: <?= e(format_price((float) $order['total_amount'])) ?></p>
+            <p><?= e(format_datetime($order['created_at'])) ?> — Total: <?= e(price_label((float) $order['total_amount'])) ?></p>
             <ul>
                 <?php foreach ($itemsByOrder[$order['id']] as $item): ?>
                     <li><?= (int) $item['quantity'] ?>x <?= e($item['event_title']) ?> — <?= e($item['ticket_type_name']) ?></li>
@@ -56,7 +78,10 @@ include __DIR__ . '/../templates/header.php';
                     <?php endforeach; ?>
                 </div>
             <?php elseif ($order['status'] === 'pending'): ?>
-                <p><em>Aguardando confirmação do Mercado Pago. Atualize esta página em instantes.</em></p>
+                <p><em>Pagamento ainda não confirmado. Se você fechou a tela do Mercado Pago antes de pagar, retome por aqui.</em></p>
+                <a class="btn btn-primary" href="<?= e(base_url('pagar.php?pedido=' . (int) $order['id'])) ?>">
+                    Pagar pedido #<?= (int) $order['id'] ?>
+                </a>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>
